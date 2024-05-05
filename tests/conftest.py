@@ -4,7 +4,7 @@ from uuid import UUID
 import pytest
 
 from store.db.mongo import db_client
-from store.schemas.product import ProductIn
+from store.schemas.product import ProductIn, ProductUpdate
 from tests.factories import product_data
 
 
@@ -20,22 +20,27 @@ def mongo_client():
     return db_client.get()
 
 
-@pytest.fixture(autouse=True)
-async def clear_collections(mongo_client):
-    yield
-    collections_names = await mongo_client.get_database().list_collection_names()
-    for collection_name in collections_names:
-        if collection_name.startswith("system"):
-            continue
-
-        await mongo_client.get_database()[collection_name].delete_many({})
+# @pytest.fixture(autouse=True)
+# async def clear_collections(mongo_client):
+#     yield
+#     collections_names = await mongo_client.get_database().list_collection_names()
+#     for collection_name in collections_names:
+#         if collection_name.startswith("system"):
+#             continue
+#
+#         await mongo_client.get_database()[collection_name].delete_many({})
 
 
 @pytest.fixture
 def product_id() -> UUID:
-    return UUID("123e4567-e89b-12d3-a456-426614174000")
+    return UUID("61b8c22a-015f-4c0c-a3f6-681b39bcbec9")
 
 
 @pytest.fixture
 def product_in(product_id) -> ProductIn:
     return ProductIn(**product_data(), id=product_id)
+
+
+@pytest.fixture
+def product_up(product_id):
+    return ProductUpdate(**product_data(), id=product_id)
