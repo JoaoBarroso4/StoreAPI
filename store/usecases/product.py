@@ -34,13 +34,16 @@ class ProductUseCase:
         return [ProductOut(**product) async for product in self.collection.find()]
 
     async def update(self, product_id: UUID, body: ProductUpdate) -> ProductUpdateOut:
-        product = await self.collection.find_one_and_update(
+        # required for decimal fix
+        product = ProductUpdate(**body.model_dump(exclude_none=True))
+
+        result = await self.collection.find_one_and_update(
             filter={"id": product_id},
-            update={"$set": body.model_dump(exclude_none=True)},
+            update={"$set": product.model_dump()},
             return_document=pymongo.ReturnDocument.AFTER,
         )
 
-        return ProductUpdateOut(**product)
+        return ProductUpdateOut(**result)
 
     async def delete(self, product_id: UUID) -> bool:
         product = await self.collection.find_one({"id": product_id})

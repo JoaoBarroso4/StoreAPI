@@ -43,7 +43,7 @@ async def test_usecases_query_should_return_success(products_inserted):
 
 
 async def test_usecases_update_should_return_success(product_inserted, product_up):
-    product_up.price = 4000
+    product_up.price = "4.000"
     result = await product_usecase.update(
         product_id=product_inserted.id, body=product_up
     )
