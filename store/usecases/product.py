@@ -34,12 +34,11 @@ class ProductUseCase:
         return [ProductOut(**product) async for product in self.collection.find()]
 
     async def update(self, product_id: UUID, body: ProductUpdate) -> ProductUpdateOut:
-        # required for decimal fix
-        product = ProductUpdate(**body.model_dump(exclude_none=True))
-
         result = await self.collection.find_one_and_update(
             filter={"id": product_id},
-            update={"$set": product.model_dump()},
+            update={
+                "$set": body.model_dump(exclude_none=True)
+            },  # required for decimal fix
             return_document=pymongo.ReturnDocument.AFTER,
         )
 
