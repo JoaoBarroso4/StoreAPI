@@ -26,7 +26,7 @@ docker-compose up -d
 ```
 6. Run the application
 ```bash
-poetry run uvicorn app.main:app --reload
+poetry run uvicorn store.main:app --reload
 ```
 The server will start running at `http://localhost:8000`. Docs at `http://localhost:8000/docs`.
 
