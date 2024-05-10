@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional, Annotated
 
@@ -8,8 +9,10 @@ from store.schemas.base import BaseSchemaMixin, OutSchema
 
 
 class ProductBase(BaseSchemaMixin):
-    name: str = Field(..., description="Product name")  # ... is a required field
-    quantity: int = Field(..., description="Product quantity")
+    name: str = Field(
+        ..., description="Product name", min_length=3, max_length=100
+    )  # ... is a required field
+    quantity: int = Field(..., description="Product quantity", ge=0)  # ge means >= 0
     price: Decimal = Field(..., description="Product price")
     status: bool = Field(..., description="Product status")
 
@@ -33,6 +36,7 @@ class ProductUpdate(BaseSchemaMixin):
     quantity: Optional[int] = Field(None, description="Product quantity")
     price: Optional[Decimal_] = Field(None, description="Product price")
     status: Optional[bool] = Field(None, description="Product status")
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class ProductUpdateOut(ProductOut):

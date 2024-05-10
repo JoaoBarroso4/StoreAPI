@@ -75,16 +75,30 @@ async def test_controller_patch_should_return_success(
 
     content = response.json()
 
-    del content["updated_at"]
     del content["created_at"]
 
     assert response.status_code == status.HTTP_200_OK
+    assert content["updated_at"] != product_inserted.updated_at
+
+    del content["updated_at"]
+
     assert content == {
         "id": str(product_inserted.id),
         "name": "iPhone 11 Pro Max",
         "quantity": updated_values["quantity"],
         "price": updated_values["price"],
         "status": True,
+    }
+
+
+async def test_controller_patch_should_return_not_found(client, products_url):
+    response = await client.patch(
+        f"{products_url}64d5d30b-c40a-4a2a-b72e-15f548aacd57", json={"quantity": 20}
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {
+        "detail": "Product not found with filter: 64d5d30b-c40a-4a2a-b72e-15f548aacd57"
     }
 
 

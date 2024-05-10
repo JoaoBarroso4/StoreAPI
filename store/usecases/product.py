@@ -42,6 +42,9 @@ class ProductUseCase:
             return_document=pymongo.ReturnDocument.AFTER,
         )
 
+        if not result:
+            raise NotFoundException(msg=f"Product not found with filter: {product_id}")
+
         return ProductUpdateOut(**result)
 
     async def delete(self, product_id: UUID) -> bool:
